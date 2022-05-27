@@ -400,6 +400,23 @@ describe('/', () => {
     });
 
     describe('/users', () => {
+      describe('/', () => {
+        it('GET status:200, serves all users', async () => {
+          const { body } = await request(app).get('/api/users').expect(200);
+          expect(body).toContainKeys(['users']);
+          expect(body.users).toBeArray();
+          expect(body.users.length).toBe(4);
+          expect(body.users[0]).toContainKeys([
+            'username',
+            'name',
+            'avatar_url',
+          ]);
+        });
+        it('INVALID METHOD status:405', async () => {
+          const { body } = await request(app).put('/api/users').expect(405);
+          expect(body.msg).toBe('Method Not Allowed');
+        });
+      });
       describe('/:username', () => {
         it('GET status:200, serves up correct user', async () => {
           const { body } = await request(app)
